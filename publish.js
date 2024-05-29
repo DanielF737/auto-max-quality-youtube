@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const webstore = require('chrome-webstore-upload')({
   extensionId: process.env.EXTENSION_ID,
   clientId: process.env.CLIENT_ID,

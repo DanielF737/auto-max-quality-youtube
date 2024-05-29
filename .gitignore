@@ -11,3 +11,5 @@ Thumbs.db
 
 # ZIP files
 *.zip
+
+.env

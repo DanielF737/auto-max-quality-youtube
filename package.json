@@ -7,5 +7,8 @@
   },
   "devDependencies": {
     "chrome-webstore-upload-cli": "^1.2.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
   }
 }
