@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "chrome-webstore-upload-cli": "^3.1.0"
+  }
+}
