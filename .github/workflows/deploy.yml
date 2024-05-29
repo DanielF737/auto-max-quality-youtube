@@ -1,43 +1,53 @@
-name: Deploy Chrome Extension
+name: Build, Package, and Deploy Chrome Extension
 
 on:
   push:
     branches:
-      - main
+      - main  # Change this to your deployment branch
 
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '14'  # Use the node version your project requires
 
     - name: Install dependencies
       run: npm install
 
     - name: Build the extension
-      run: npm run build
+      run: npm run build  # Adjust this command based on your build process
 
     - name: Package the extension
-      run: npm run package
+      run: zip -r extension.zip dist/*  # Adjust based on your build output directory
 
-    - name: Set up Chrome Web Store credentials
-      run: |
-        echo "EXTENSION_ID=${{ secrets.EXTENSION_ID }}" >> $GITHUB_ENV
-        echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
-        echo "CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
-        echo "REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }}" >> $GITHUB_ENV
+    - name: Upload Extension Package
+      uses: actions/upload-artifact@v2
+      with:
+        name: extension-package
+        path: extension.zip
 
-    - name: Deploy to Chrome Web Store
-      run: npm run deploy
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Download Extension Package
+      uses: actions/download-artifact@v2
+      with:
+        name: extension-package
+
+    - name: Upload to Chrome Web Store
+      uses: x-falcon/first-chrome-extension-publish@1.2.2
       env:
-        EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+        ZIP_FILE: extension.zip
