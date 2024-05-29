@@ -1,0 +1,46 @@
+name: Build and Deploy Chrome Extension
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build the extension
+      run: npm run build  # Adjust this step according to your build process
+
+    - name: Compress extension
+      run: zip -r extension.zip . -x '*.git*' -x 'node_modules/*' -x '.*'  # Adjust the excluded files as needed
+
+    - name: Deploy to Chrome Web Store
+      uses: google-github-actions/deploy-chrome-extension@v0.3.0
+      with:
+        client_id: ${{ secrets.CLIENT_ID }}
+        client_secret: ${{ secrets.CLIENT_SECRET }}
+        refresh_token: ${{ secrets.REFRESH_TOKEN }}
+        extension_id: ${{ secrets.EXTENSION_ID }}
+        asset: extension.zip
+
+    - name: Publish Chrome Web Store
+      uses: google-github-actions/publish-chrome-extension@v0.3.0
+      with:
+        client_id: ${{ secrets.CLIENT_ID }}
+        client_secret: ${{ secrets.CLIENT_SECRET }}
+        refresh_token: ${{ secrets.REFRESH_TOKEN }}
+        extension_id: ${{ secrets.EXTENSION_ID }}
+        asset: extension.zip

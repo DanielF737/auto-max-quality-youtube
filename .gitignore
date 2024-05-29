@@ -1,0 +1,13 @@
+# Node modules if you're using Node.js
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# ZIP files
+*.zip
