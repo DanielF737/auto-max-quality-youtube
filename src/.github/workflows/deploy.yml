@@ -21,8 +21,11 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Compress extension
-      run: zip -r extension.zip . -x '*.git*' -x 'node_modules/*' -x '.*'  # Adjust the excluded files as needed
+    - name: Build the extension
+      run: npm run build
+
+    - name: Package the extension
+      run: npm run package
 
     - name: Set up Chrome Web Store credentials
       run: |
@@ -32,4 +35,9 @@ jobs:
         echo "REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }}" >> $GITHUB_ENV
 
     - name: Deploy to Chrome Web Store
-      run: node publish.js
+      run: npm run deploy
+      env:
+        EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}

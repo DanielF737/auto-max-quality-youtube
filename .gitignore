@@ -1,15 +1,22 @@
-# Node modules if you're using Node.js
+# dependencies
 node_modules/
 
-# Logs
-logs/
-*.log
+# directories
+dist/
 
-# OS-specific files
+# local environment variables
+.env
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# ZIP files
+# miscellaneous
 *.zip
-
-.env
