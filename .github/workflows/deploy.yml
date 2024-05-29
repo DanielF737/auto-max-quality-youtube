@@ -32,4 +32,4 @@ jobs:
         echo "REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }}" >> $GITHUB_ENV
 
     - name: Deploy to Chrome Web Store
-      run: npm run deploy
+      run: node publish.js
