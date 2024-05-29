@@ -1,4 +1,4 @@
-name: Build and Deploy Chrome Extension
+name: Deploy Chrome Extension
 
 on:
   push:
@@ -21,9 +21,6 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Build the extension
-      run: npm run build  # Adjust this step according to your build process
-
     - name: Compress extension
       run: zip -r extension.zip . -x '*.git*' -x 'node_modules/*' -x '.*'  # Adjust the excluded files as needed
 
@@ -35,4 +32,4 @@ jobs:
         echo "REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }}" >> $GITHUB_ENV
 
     - name: Deploy to Chrome Web Store
-      run: node publish.js
+      run: npm run deploy
