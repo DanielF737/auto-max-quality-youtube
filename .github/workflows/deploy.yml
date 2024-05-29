@@ -44,10 +44,10 @@ jobs:
         name: extension-package
 
     - name: Upload to Chrome Web Store
-      uses: x-falcon/first-chrome-extension-publish@1.2.2
-      env:
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-        EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
-        ZIP_FILE: extension.zip
+      uses: fregante/chrome-webstore-upload@v1
+      with:
+        extension-id: ${{ secrets.EXTENSION_ID }}
+        client-id: ${{ secrets.CLIENT_ID }}
+        client-secret: ${{ secrets.CLIENT_SECRET }}
+        refresh-token: ${{ secrets.REFRESH_TOKEN }}
+        source: extension.zip
