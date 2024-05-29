@@ -1,9 +1,8 @@
 name: Build, Package, and Deploy Chrome Extension
 
 on:
-  push:
-    tags:
-      - v*.*.*
+  release:
+    types: [published]
 
 jobs:
   build-chrome-extension:
@@ -29,7 +28,9 @@ jobs:
 
       - name: Archive chrome-extension artifact
         run: mv extension.zip chrome-extension-${{ github.sha }}.zip
-      - uses: actions/upload-artifact@v2
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
         with:
           name: chrome-extension-${{ github.sha }}
           path: chrome-extension-${{ github.sha }}.zip
