@@ -1,4 +1,4 @@
-name: Update Chrome Extension
+name: Build, Package, and Deploy Chrome Extension
 
 on:
   push:
@@ -22,12 +22,14 @@ jobs:
         run: npm install
 
       - name: Build
-        run: |-
-          npm run build
-          zip -r chrome-extension-${{ github.sha }}.zip dist
+        run: npm run build
+
+      - name: Package
+        run: npm run package
 
       - name: Archive chrome-extension artifact
-        uses: actions/upload-artifact@v2
+        run: mv extension.zip chrome-extension-${{ github.sha }}.zip
+      - uses: actions/upload-artifact@v2
         with:
           name: chrome-extension-${{ github.sha }}
           path: chrome-extension-${{ github.sha }}.zip
