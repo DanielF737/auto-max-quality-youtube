@@ -1,53 +1,61 @@
-name: Build, Package, and Deploy Chrome Extension
+name: Update Chrome Extension
 
 on:
   push:
-    branches:
-      - main  # Change this to your deployment branch
+    tags:
+      - v*.*.*
 
 jobs:
-  build:
+  build-chrome-extension:
+    name: Build Chrome extension artifact
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'  # Use the node version your project requires
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Build the extension
-      run: npm run build  # Adjust this command based on your build process
+      - name: Build
+        run: |-
+          npm run build
+          zip -r chrome-extension-${{ github.sha }}.zip dist
 
-    - name: Package the extension
-      run: zip -r extension.zip dist/*  # Adjust based on your build output directory
+      - name: Archive chrome-extension artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: chrome-extension-${{ github.sha }}
+          path: chrome-extension-${{ github.sha }}.zip
 
-    - name: Upload Extension Package
-      uses: actions/upload-artifact@v2
-      with:
-        name: extension-package
-        path: extension.zip
-
-  deploy:
+  upload-extension:
+    name: Upload extension
     runs-on: ubuntu-latest
-    needs: build
-
+    needs: build-chrome-extension
+    env:
+      EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
     steps:
-    - name: Download Extension Package
-      uses: actions/download-artifact@v2
-      with:
-        name: extension-package
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-    - name: Upload to Chrome Web Store
-      uses: fregante/chrome-webstore-upload@v1
-      with:
-        extension-id: ${{ secrets.EXTENSION_ID }}
-        client-id: ${{ secrets.CLIENT_ID }}
-        client-secret: ${{ secrets.CLIENT_SECRET }}
-        refresh-token: ${{ secrets.REFRESH_TOKEN }}
-        source: extension.zip
+      - name: Download bundle artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: chrome-extension-${{ github.sha }}
+
+      - name: Install webstore cli
+        run: npm install -g chrome-webstore-upload-cli
+
+      - name: Upload to Chrome Web Store
+        run: |
+          chrome-webstore-upload upload \
+            --source chrome-extension-${{ github.sha }}.zip \
+            --extension-id ${{ secrets.EXTENSION_ID }} \
+            --client-id ${{ secrets.CLIENT_ID }} \
+            --client-secret ${{ secrets.CLIENT_SECRET }} \
+            --refresh-token ${{ secrets.REFRESH_TOKEN }}
