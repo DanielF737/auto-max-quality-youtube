@@ -24,6 +24,7 @@ archive.directory('dist/', false);
 
 // Append manifest and icon files
 archive.file('src/manifest.json', { name: 'manifest.json' });
+archive.file('src/popup.html', { name: 'popup.html' });
 archive.directory('src/icons/', 'icons');
 
 archive.finalize();
