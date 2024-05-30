@@ -1,6 +1,6 @@
 {
   "name": "youtube-quality-logger",
-  "version": "1.1.2",
+  "version": "1.10.1",
   "description": "Automatically sets YouTube videos to the highest quality.",
   "scripts": {
     "build": "webpack --config webpack.config.js",
