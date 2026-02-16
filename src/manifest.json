@@ -5,7 +5,8 @@
   "description": "Automatically sets YouTube videos to the highest quality.",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"

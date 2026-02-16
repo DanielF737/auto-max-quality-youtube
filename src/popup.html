@@ -3,12 +3,197 @@
 <head>
   <title>Auto High-Quality YouTube</title>
   <style>
-    body { width: 200px; font-family: Arial, sans-serif; background-color: black; color: white; }
-    h1 { font-size: 16px; }
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      width: 320px;
+      margin: 0;
+      padding: 12px;
+      font-family: Arial, sans-serif;
+      background-color: #111111;
+      color: #f3f3f3;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: #c9c9c9;
+    }
+
+    .section-title {
+      font-size: 12px;
+      margin: 10px 0 6px;
+      color: #dcdcdc;
+      font-weight: bold;
+    }
+
+    .mode-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .mode-group label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .priority-section.disabled {
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .priority-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border: 1px solid #2e2e2e;
+      border-radius: 6px;
+      min-height: 40px;
+      max-height: 180px;
+      overflow-y: auto;
+      background: #171717;
+    }
+
+    .priority-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px;
+      border-bottom: 1px solid #262626;
+      cursor: move;
+      font-size: 12px;
+      user-select: none;
+    }
+
+    .priority-item:last-child {
+      border-bottom: none;
+    }
+
+    .priority-item.dragging {
+      opacity: 0.45;
+    }
+
+    .priority-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .drag-tag {
+      font-size: 10px;
+      color: #9b9b9b;
+      white-space: nowrap;
+    }
+
+    .remove-btn {
+      border: 1px solid #444444;
+      background: transparent;
+      color: #f3f3f3;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .add-row {
+      margin-top: 8px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    select,
+    button {
+      font-size: 12px;
+      border-radius: 4px;
+      border: 1px solid #444444;
+      background: #1f1f1f;
+      color: #f3f3f3;
+      padding: 5px 6px;
+    }
+
+    #qualitySelect {
+      flex: 1;
+      min-width: 0;
+    }
+
+    #saveButton {
+      width: 100%;
+      margin-top: 10px;
+      padding: 7px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #2f8cff;
+      border-color: #2f8cff;
+      color: #ffffff;
+    }
+
+    .status {
+      margin-top: 8px;
+      min-height: 16px;
+      font-size: 12px;
+    }
+
+    .status.error {
+      color: #ff8181;
+    }
+
+    .status.success {
+      color: #8ad39b;
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #b0b0b0;
+    }
   </style>
 </head>
 <body>
   <h1>Auto High-Quality YouTube</h1>
-  <p>This extension automatically sets YouTube videos to the highest quality. The source code is available here on <a href="https://github.com/DanielF737/auto-max-quality-youtube">github</a>. Follow my dev on twitter <a href="https://x.com/DanielF737">@DanielF737</a></p>
+  <p>Choose max quality mode or define a prioritized quality order.</p>
+
+  <div class="section-title">Mode</div>
+  <div class="mode-group" id="modeGroup">
+    <label>
+      <input type="radio" name="qualityMode" value="max" id="modeMax">
+      Max quality
+    </label>
+    <label>
+      <input type="radio" name="qualityMode" value="priority" id="modePriority">
+      Quality priority
+    </label>
+  </div>
+
+  <div class="priority-section" id="prioritySection">
+    <div class="section-title">Priority Order (drag to reorder)</div>
+    <ul class="priority-list" id="priorityList"></ul>
+
+    <div class="add-row">
+      <select id="qualitySelect"></select>
+      <button id="addButton" type="button">Add</button>
+    </div>
+  </div>
+
+  <button id="saveButton" type="button">Save</button>
+  <div class="status" id="statusText"></div>
+  <div class="hint">If no preferred quality is available, the extension falls back to max quality.</div>
+
+  <script src="popup.js"></script>
 </body>
 </html>

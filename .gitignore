@@ -20,3 +20,5 @@ Thumbs.db
 
 # miscellaneous
 *.zip
+extension.zip
+chrome-extension-*.zip
