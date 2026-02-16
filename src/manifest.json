@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Auto High-Quality YouTube",
-  "version": "1.10.1",
+  "version": "1.11.3",
   "description": "Automatically sets YouTube videos to the highest quality.",
   "permissions": [
     "activeTab",
