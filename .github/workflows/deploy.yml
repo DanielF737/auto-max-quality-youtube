@@ -3,6 +3,7 @@ name: Build, Package, and Deploy Chrome Extension
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   build-chrome-extension:
@@ -41,6 +42,9 @@ jobs:
     needs: build-chrome-extension
     env:
       EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
     steps:
       - uses: actions/setup-node@v4
         with:
@@ -55,11 +59,37 @@ jobs:
       - name: Install webstore cli
         run: npm install -g chrome-webstore-upload-cli
 
+      - name: Validate required secrets
+        run: |
+          set -euo pipefail
+          for name in EXTENSION_ID CLIENT_ID CLIENT_SECRET REFRESH_TOKEN; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::$name is not configured."
+              exit 1
+            fi
+          done
+
+      - name: Validate OAuth token exchange
+        run: |
+          set -euo pipefail
+          response="$(curl -sS -X POST https://oauth2.googleapis.com/token \
+            -d client_id="$CLIENT_ID" \
+            -d client_secret="$CLIENT_SECRET" \
+            -d refresh_token="$REFRESH_TOKEN" \
+            -d grant_type=refresh_token)"
+
+          if echo "$response" | grep -q '"access_token"'; then
+            echo "OAuth token exchange succeeded."
+          else
+            echo "::error::OAuth token exchange failed. Response: $response"
+            exit 1
+          fi
+
       - name: Upload to Chrome Web Store
         run: |
           chrome-webstore-upload upload \
             --source chrome-extension-${{ github.sha }}.zip \
-            --extension-id ${{ secrets.EXTENSION_ID }} \
-            --client-id ${{ secrets.CLIENT_ID }} \
-            --client-secret ${{ secrets.CLIENT_SECRET }} \
-            --refresh-token ${{ secrets.REFRESH_TOKEN }}
+            --extension-id "$EXTENSION_ID" \
+            --client-id "$CLIENT_ID" \
+            --client-secret "$CLIENT_SECRET" \
+            --refresh-token "$REFRESH_TOKEN"
